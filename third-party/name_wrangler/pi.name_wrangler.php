@@ -2,7 +2,7 @@
 
 $plugin_info = array(
 	'pi_name' => 'Name Wrangler',
-	'pi_version' => '2.0',
+	'pi_version' => '2.0.1',
 	'pi_author' => 'Derek Hogue',
 	'pi_author_url' => 'http://github.com/amphibian/pi.name_wrangler.ee2_addon',
 	'pi_description' => 'Store proper names in their ideal format but still use them in all sorts of namey ways.',
@@ -21,16 +21,18 @@ class Name_wrangler
 		$this->EE =& get_instance();
 		
 		if($str == '') $str = $this->EE->TMPL->tagdata;
-		// Replace all forms of ampersand with a standard delimiter
-		$str = str_replace(array(' & ', '&amp;', '&#38;'), ';', $str);
 
 		$type = $this->EE->TMPL->fetch_param('type', 'full');
 		$form = $this->EE->TMPL->fetch_param('form', 'singular');
-		
+		$multiple = $this->EE->TMPL->fetch_param('multiple', 'on');
+
+		// Replace all forms of ampersand with a standard delimiter
+		$str = ($multiple == 'on') ? str_replace(array(' & ', '&amp;', '&#38;'), '+', $str) : $str;
+				
 		$names = array();
 		
 		// Check if we have multiple names
-		if( $people = explode(';', $str) )
+		if( $people = explode('+', $str) )
 		{
 			foreach($people as $person)
 			{
@@ -147,6 +149,7 @@ Parameters:
 
 "type": the type of name(s) to return. Either "full", "first", "middle", "first+middle" or "last".  Defaults to "full".
 "form": either "singular" or "posessive". Defaults to "singular".
+"multiple": if set to "off", Name Wrangler will not look for multiple names (useful for when you want to use ampersands within names).
 "and": word or character entity to use  before the last name at the end of a list of names.  Defaults to "&amp;".
 
 	<?php
