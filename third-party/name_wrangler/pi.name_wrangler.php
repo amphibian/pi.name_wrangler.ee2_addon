@@ -20,6 +20,12 @@ class Name_wrangler
 		$this->EE =& get_instance();
 		
 		if($str == '') $str = $this->EE->TMPL->tagdata;
+		
+		$str = str_replace(
+			array(LD.'screen_name'.RD, LD.'logged_in_screen_name'.RD),
+			$this->EE->session->userdata['screen_name'],
+			$str
+		);
 
 		$type = $this->EE->TMPL->fetch_param('type', 'full');
 		$form = $this->EE->TMPL->fetch_param('form', 'singular');
